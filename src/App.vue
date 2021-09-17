@@ -38,19 +38,27 @@
                                 >Home</router-link
                             >
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" v-if="!userId.length">
                             <router-link
                                 :to="{ name: 'Login' }"
                                 class="nav-link"
                                 >Login</router-link
                             >
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" v-if="!userId.length">
                             <router-link
                                 :to="{ name: 'Signup' }"
                                 class="nav-link"
                                 >Signup</router-link
                             >
+                        </li>
+                        <li class="nav-item" @click="logoutUser" v-else>
+                            <router-link
+                                :to="{ name: 'Login' }"
+                                class="btn btn-danger nav-link fw-bolder"
+                                >Log Out
+                                <i class="fas fa-sign-out-alt"></i>
+                            </router-link>
                         </li>
                     </ul>
                 </div>
@@ -67,6 +75,14 @@ export default {
         messages() {
             return this.$store.getters.messages;
         },
+        userId() {
+            return this.$store.getters.userId;
+        },
+    },
+    methods: {
+        logoutUser() {
+            this.$store.dispatch("logoutUser");
+        },
     },
 };
 </script>
@@ -77,8 +93,8 @@ export default {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-.messages{
-  top:60px;
-  right: 50px;
+.messages {
+    top: 60px;
+    right: 50px;
 }
 </style>

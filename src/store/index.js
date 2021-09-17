@@ -9,7 +9,7 @@ const createToken = (id) => {
   });
 };
 
-const messageTime = 5000;
+const messageTime = 3000;
 
 export default createStore({
   state: {
@@ -50,6 +50,10 @@ export default createStore({
     resetStates(state) {
       state.authentication.email = '';
       state.authentication.password = '';
+    },
+    logoutUser(state) {
+      localStorage.removeItem("jwt")
+      state.currentUserId = ''
     }
   },
   actions: {
@@ -103,11 +107,16 @@ export default createStore({
       } catch (err) {
         commit("updateErrorMessage", err);
       }
+    },
+
+    logoutUser(state) {
+      state.commit("logoutUser");
     }
   },
   modules: {
   },
   getters:{
     messages: (state) => state.messages,
+    userId: (state) => state.currentUserId,
   }
 })

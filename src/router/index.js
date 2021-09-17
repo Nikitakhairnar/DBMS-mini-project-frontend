@@ -38,9 +38,9 @@ router.beforeEach((to,from,next) => {
     if (token) {
       jwt.verify(token, 'Secret Code', (err, decodedToken) => {
         if (err) {
-          console.log(err);
+          store.commit("updateErrorMessage",err.message)
           next({
-            name: "Signup"
+            name: "Login"
           })
         } else {
           store.commit("updateCurrentUserId",decodedToken.id);
@@ -49,7 +49,7 @@ router.beforeEach((to,from,next) => {
       })
     } else {
       next({
-        name: "Signup"
+        name: "Login"
       });
     }
   } else {
