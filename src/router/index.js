@@ -17,13 +17,38 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue'),
+    meta: { checkUser: true }
   },
   {
     path: '/signup',
     name: 'Signup',
     component: () => import(/* webpackChunkName: "Signup" */ '../views/Signup.vue'),
+    meta: { checkUser: true }
   },
+
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'pageNotFound',
+    component: () => import(/* webpackChunkName: "Signup" */ '../views/pageNotFound.vue'),
+    beforeEnter: (to, from, next) => {
+      const token = localStorage.getItem("jwt");
+
+      if (token) {
+        jwt.verify(token, 'Secret Code', (err, decodedToken) => {
+          if (err) {
+            store.commit("updateErrorMessage", err.message)
+            next()
+          } else {
+            store.commit("updateCurrentUserId", decodedToken.id);
+            next();
+          }
+        })
+      } else {
+        next();
+      }
+    }
+  }
 ]
 
 const router = createRouter({
@@ -52,7 +77,27 @@ router.beforeEach((to,from,next) => {
         name: "Login"
       });
     }
-  } else {
+  }
+  else if (to.matched.some(record => record.meta.checkUser)) {
+    const token = localStorage.getItem("jwt");
+
+    if (token) {
+      jwt.verify(token, 'Secret Code', (err, decodedToken) => {
+        if (err) {
+          store.commit("updateErrorMessage", err.message)
+          next()
+        } else {
+          store.commit("updateCurrentUserId", decodedToken.id);
+          next({
+            name: "Home"
+          });
+        }
+      })
+    } else {
+      next();
+    }
+  }
+  else {
     next();
   }
 })
