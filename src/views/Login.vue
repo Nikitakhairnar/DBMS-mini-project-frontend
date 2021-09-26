@@ -27,8 +27,9 @@
                             <button
                                 type="button"
                                 class="btn btn-primary btn-floating mx-1"
+                                @click="googleAuth"
                             >
-                                <i class="fab fa-facebook-f"></i>
+                                <i class="fab fa-google"></i>
                             </button>
 
                             <button
@@ -157,6 +158,57 @@ export default {
         async loginUser() {
             await this.$store.dispatch("loginUser")
             this.$router.push({name: 'Home'})
+        },
+        googleAuth() {
+            let gapi = window.gapi;
+            let clientId =
+                "411090437304-fu48s86i0ogqi39s3kdhemofenpu43s5.apps.googleusercontent.com";
+            let apiKey = "AIzaSyCL5wgTn_3_V67pG6lQiK-WdVr2a305wus";
+            let discoveryDocs = [
+                "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+            ];
+            let scope = "https://www.googleapis.com/auth/drive.metadata.readonly";
+            gapi.load("client:auth2", () => {
+                gapi.client
+                    .init({
+                        apiKey,
+                        clientId,
+                        discoveryDocs,
+                        scope,
+                    })
+                    .then(() => {
+                        if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
+                            this.googleUserProfile = gapi.auth2
+                                .getAuthInstance()
+                                .currentUser.get();
+                            this.loginApiCall(this.googleUserProfile);
+                            // console.log("logged in...");
+                        } else {
+                            gapi.auth2
+                                .getAuthInstance()
+                                .signIn()
+                                .then(() => {
+                                    this.googleUserProfile = gapi.auth2
+                                        .getAuthInstance()
+                                        .currentUser.get();
+                                    this.loginApiCall(this.googleUserProfile);
+                                    // console.log("NOT logged in...");
+                                })
+                                .catch((err) => {
+                                    alert(`Google auth error: ${err}`);
+                                });
+                        }
+                    })
+                    .catch((err) => {
+                        alert(err);
+                    });
+            });
+        },
+        async loginApiCall(data) {
+            // API call to handle googleUserProfile data
+            // then redirect to home/profile page
+            await this.$store.dispatch("loginUserFromGoogle",data.getBasicProfile().getId())
+            this.$router.push("/");
         },
     },
     beforeRouteLeave(to,from,next) {

@@ -14,6 +14,7 @@ const messageTime = 3000;
 export default createStore({
   state: {
     currentUserId: '',
+    currentUserDbId: '',
     authentication: {
       email: '',
       password: ''
@@ -44,6 +45,9 @@ export default createStore({
         state.messages.error = ''
       }, messageTime);
     },
+    updateCurrentUserDbId(state, userId) {
+      state.currentUserDbId = userId;
+    },
     updateCurrentUserId(state, userId) {
       state.currentUserId = userId;
     },
@@ -66,8 +70,9 @@ export default createStore({
         let result = await postService.createUser(credential);
         if (result.user) {
           const token = createToken(result.user);
-          localStorage.setItem("jwt",token)
+          localStorage.setItem("jwt", token)
           commit("updateSuccessMessage", "User Created");
+          commit("updateCurrentUserDbId", result.user)
           commit("updateCurrentUserId", result.user)
         }
         if (result.errors) {
@@ -92,8 +97,9 @@ export default createStore({
         let result = await postService.loginUser(credential);
         if (result.user) {
           const token = createToken(result.user);
-          localStorage.setItem("jwt",token)
-          commit("updateSuccessMessage","You are logged in");
+          localStorage.setItem("jwt", token)
+          commit("updateSuccessMessage", "You are logged in");
+          commit("updateCurrentUserDbId", result.user)
           commit("updateCurrentUserId", result.user)
         }
         if (result.errors) {
@@ -111,11 +117,17 @@ export default createStore({
 
     logoutUser(state) {
       state.commit("logoutUser");
+    },
+    async loginUserFromGoogle(state, payload) {
+      const token = createToken(payload);
+      localStorage.setItem("jwt", token)
+      state.commit("updateSuccessMessage", "You are logged in");
+      state.commit("updateCurrentUserId", payload)
     }
   },
   modules: {
   },
-  getters:{
+  getters: {
     messages: (state) => state.messages,
     userId: (state) => state.currentUserId,
   }
