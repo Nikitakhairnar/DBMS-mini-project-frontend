@@ -44,11 +44,12 @@
                             >
                                 <i class="fab fa-linkedin-in"></i>
                             </button>
+							
                         </div>
 
                         <div class="divider d-flex align-items-center my-4">
                             <p class="fw-bold mx-auto mb-0">Or</p>
-                        </div>
+						</div>
 
                         <!-- Email input -->
                         <div class="form-outline mb-4">
@@ -132,6 +133,7 @@
     </div>
 </template>
 
+
 <script>
 export default {
     name: "Login",
@@ -153,11 +155,31 @@ export default {
             },
         },
     },
+	data() {
+            return {
+                // client_id is the only required property but you can add several more params, full list down bellow on the Auth api section
+                params: {
+                    client_id: "745489409648-02f4v90o22ldbl5ssj2t0dp9pk89s4uu.apps.googleusercontent.com"
+                },
+                // only needed if you want to render the button with the google ui
+                renderParams: {
+                    width: 250,
+                    height: 50,
+                    longtitle: true
+                }
+            }
+        },
     methods: {
         async loginUser() {
             await this.$store.dispatch("loginUser")
             this.$router.push({name: 'Home'})
         },
+		onSuccess(googleUser) {
+            console.log(googleUser);
+ 
+            // This only gets the user information: id, name, imageUrl and email
+            console.log(googleUser.getBasicProfile());
+        }
     },
     beforeRouteLeave(to,from,next) {
         this.$store.commit("resetStates");
