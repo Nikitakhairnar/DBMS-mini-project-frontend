@@ -1,7 +1,12 @@
 const path = require("path");
 
 module.exports = {
-    outputDir: path.resolve(__dirname, "../DBMS-mini-project-backend/public"),
+    outputDir: path.resolve(__dirname, "../server/public"),
+    pwa: {
+        workboxOptions: {
+            skipWaiting: true
+        }
+    },
     devServer: {
         proxy: {
             "/api": {
