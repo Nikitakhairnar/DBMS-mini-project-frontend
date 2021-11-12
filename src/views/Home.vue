@@ -36,7 +36,7 @@
               <li class="list-group-item item-2 w-100 p-3">2021-22</li>
             </ul>
             <ul class="list-group list-group-horizontal">
-              <li class="list-group-item item-1 w-100 p-3">semester</li>
+              <li class="list-group-item item-1 w-100 p-3">Semester</li>
               <li class="list-group-item item-2 w-100 p-3">5</li>
             </ul>
             <ul class="list-group list-group-horizontal">
